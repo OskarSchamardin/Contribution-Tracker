@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="SVGRoot"
+   version="1.1"
+   viewBox="0 0 64 64"
+   height="64px"
+   width="64px">
+  <defs
+     id="defs815" />
+  <metadata
+     id="metadata818">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1" />
+  <g
+     id="layer2">
+    <rect
+       y="8.5632067"
+       x="8.4284172"
+       height="47.009434"
+       width="47.125893"
+       id="rect7059"
+       style="fill:#cccccc;fill-opacity:1;stroke:#00afff;stroke-width:0.85577506;stroke-opacity:1" />
+    <rect
+       y="29.076414"
+       x="19.138847"
+       height="17.094339"
+       width="4.2841721"
+       id="rect6957"
+       style="fill:#00afff;fill-opacity:1;stroke:#00afff;stroke-width:0.85577506;stroke-opacity:1" />
+    <rect
+       y="41.897171"
+       x="27.707191"
+       height="4.2735848"
+       width="4.2841721"
+       id="rect6959"
+       style="fill:#00afff;fill-opacity:1;stroke:#00afff;stroke-width:0.85577506;stroke-opacity:1" />
+    <rect
+       y="16.255659"
+       x="36.275536"
+       height="29.915094"
+       width="4.2841721"
+       id="rect6961"
+       style="fill:#00afff;fill-opacity:1;stroke:#00afff;stroke-width:0.85577506;stroke-opacity:1" />
+    <rect
+       y="20.529245"
+       x="44.84388"
+       height="25.64151"
+       width="4.2841721"
+       id="rect6963"
+       style="fill:#00afff;fill-opacity:1;stroke:#00afff;stroke-width:0.85577506;stroke-opacity:1" />
+    <path
+       id="path6951"
+       d="M 16.996761,51.299057 V 12.836792"
+       style="fill:none;stroke:#000000;stroke-width:0.85577506px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       id="path6955"
+       d="M 12.712589,47.025472 H 51.270137"
+       style="fill:none;stroke:#000000;stroke-width:0.85577506px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <flowRoot
+       transform="matrix(0.77235774,0,0,0.6595003,43.858318,45.353821)"
+       style="font-style:normal;font-weight:normal;font-size:5.33333349px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       id="flowRoot6965"
+       xml:space="preserve"><flowRegion
+         id="flowRegion6967"><rect
+           y="3"
+           x="5"
+           height="8"
+           width="41"
+           id="rect6969" /></flowRegion><flowPara
+         id="flowPara6971">X</flowPara></flowRoot>    <flowRoot
+       transform="matrix(0.78401366,0,0,0.6595003,8.8735084,11.165142)"
+       style="font-style:normal;font-weight:normal;font-size:5.33333349px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       id="flowRoot6997"
+       xml:space="preserve"><flowRegion
+         id="flowRegion6999"><rect
+           y="3"
+           x="6"
+           height="8"
+           width="33"
+           id="rect7001" /></flowRegion><flowPara
+         id="flowPara7003">Y</flowPara></flowRoot>  </g>
+</svg>
