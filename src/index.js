@@ -1,11 +1,11 @@
-const express = require("express");
-const fetch = require("node-fetch");
-const path = require("path");
-require('dotenv').config();
+const express = require("express");     // Serve the page at a 'localhost' near you.
+const fetch = require("node-fetch");    // Make GraphQL queries and such.
+const path = require("path");           // Use files in directory.
+require('dotenv').config();             // Use 'process.env.ENV_VARIABLE' to use '.env' file vars.
 
 const app = express();
 
-const port = 3000;
+const port = process.env.PORT || 3000;  // Use port found in '.env' or default back to port '3000'
 
 /* GraphQL query that gets sent to github API */
 const graphqlQuery = `
