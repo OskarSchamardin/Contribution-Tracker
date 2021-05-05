@@ -44,8 +44,8 @@ app.get("/data", (req, res) => {
       return result.json();
     })
     .then(data => {
-      res.send(data);
+      res.json(data);
     });
 });
 
-app.listen(port, () => console.log(`Listening on port ${port}`));
+app.listen(port, () => console.log(`Listening on port: ${port}`));
