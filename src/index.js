@@ -12,18 +12,82 @@ const graphqlQuery = `
 {
   organization(login: "TPT-Loane") {
     repository(name: "TPT-Loane") {
-      issues(last: 100) {
+      issues(first: 100) {
         nodes {
           number
           author {
             login
           }
+          comments (first: 100) {
+            nodes {
+              author {
+                login
+              }
+            }
+          }
+        }
+      }
+      refs(refPrefix: "refs/heads/", orderBy: {direction: DESC, field: TAG_COMMIT_DATE}, first: 100) {
+        edges {
+          node {
+            ... on Ref {
+              target {
+                ... on Commit {
+                  history(first: 2) {
+                    edges {
+                      node {
+                        ... on Commit {
+                          abbreviatedOid
+                          messageHeadline
+                          committedDate
+                          author {
+                            user {
+                              login
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      pullRequests(first: 100) {
+        nodes {
+          title
+          assignees(first: 100) {
+            nodes {
+              login
+            }
+          }
+          comments(first: 100) {
+            nodes {
+              author {
+                login
+              }
+            }
+          }
+          reviews(first: 100) {
+            nodes {
+              author {
+                login
+              }
+            }
+          }
+        }
+      }
+      collaborators(first: 100) {
+        nodes {
+          avatarUrl
+          login
         }
       }
     }
   }
-}
-`;
+}`;
 
 /* Serve static pages from the 'public' directory */
 app.use(express.static(path.join(__dirname, 'public')));

@@ -8,8 +8,18 @@ async function getUpdatedStatuses() {
 
 async function updateStatusesInfo() {
     /* Gets new data from github API and displays it */
-    let elStatus= document.getElementById('status');
     let data = await getUpdatedStatuses();
+    data = await data['data']['organization']['repository'];
 
-    elStatus.innerText = JSON.stringify(data);
+    /* Collaborator logins */
+    for(let i in data['collaborators']['nodes']) {
+        let username = `${data['collaborators']['nodes'][i]['login']}`;
+
+        let newListItem = document.createElement('p');
+        newListItem.className = `user-${i}`;
+        newListItem.innerText = username;
+
+        document.getElementById('list').appendChild(newListItem);
+    }
+
 }
