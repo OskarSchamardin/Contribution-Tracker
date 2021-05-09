@@ -14,7 +14,8 @@ async function updateStatusesInfo() {
     data = await data['data']['organization']['repository'];
 
     const list= document.getElementById('list');
-    let nullNames = [];         // Commits with no registered user as author
+    let nullNames = [];                 // Commits with no registered user as author
+    let showNullNameWarning = false;    // Bool for showing a warning for incomplete data
 
     /* Clear list */
     while(list.firstChild) {
@@ -71,6 +72,7 @@ async function updateStatusesInfo() {
                 if(scannedCommits.includes(commitSHA) && branch['name'] !== 'main') { continue; }   // Skip scanned commits if not on 'main' branch
 
                 if(commit[j]['node']['author']['user'] === null) {
+                    showNullNameWarning = true;
                     console.warn(`Commit: \'${commitSHA}\' author is NULL!`);   // Warn user about incomplete data
                     nullNames.push(commitSHA);                                  // Mark commit as a commit with no registered author
                 }
@@ -87,5 +89,10 @@ async function updateStatusesInfo() {
         document.getElementById(`listItem${i}`).appendChild(newListItem);
 
         /* TODO: PR number, Comments number, Code reviews number */
+    }
+
+    if(showNullNameWarning) {
+        /* Show visual warning if some commits have 'null' as the authoring user */
+        document.getElementById('nullNameWarning').style.display = 'block';
     }
 }

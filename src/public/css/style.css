@@ -13,3 +13,7 @@ html {
 .listItem:hover {
     border: 3px solid #00AFFF;
 }
+#nullNameWarning {
+    display: none;
+    color: #FFBB00;
+}
