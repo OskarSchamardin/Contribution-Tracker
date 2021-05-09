@@ -22,6 +22,7 @@ async function updateStatusesInfo() {
         list.removeChild(list.lastChild)
     }
 
+    /* Filter and display data for each collaborator */
     for(let i in data['collaborators']['nodes']) {
         const username = `${data['collaborators']['nodes'][i]['login']}`;
         const avatarURL = `${data['collaborators']['nodes'][i]['avatarUrl']}`;
@@ -30,6 +31,7 @@ async function updateStatusesInfo() {
         let mainCommitsNo = 0;      // Number of authored commits in 'main'
         let pullsNo = 0;            // Number of authored pull requests
         let pullsAssignedNo = 0;    // Number of pull requests assigned to user
+        let reviewsNo = 0;          // Number of authored code reviews (comments in review threads in PR)
         let scannedCommits = [];    // Helps with preventing duplicate data
 
         /* List item container */
@@ -105,7 +107,21 @@ async function updateStatusesInfo() {
         newListItem.innerText = `Authored pull requests: ${pullsNo} (assigned: ${pullsAssignedNo})`;
         document.getElementById(`listItem${i}`).appendChild(newListItem);
 
-        /* TODO: Comments number, Code reviews number */
+        /* Code reviews number */
+        for(let i in data['pullRequests']['nodes']) {
+            const pullRequest = data['pullRequests']['nodes'][i];
+
+            if(pullRequest['reviews'] !== null) {
+                for(let j in pullRequest['reviews']['nodes']) {
+                    if(pullRequest['reviews']['nodes'][j]['author']['login'] === username) { reviewsNo++; } // Increment if review is from username
+                }
+            }
+        }
+        newListItem = document.createElement('p');
+        newListItem.innerText = `Authored code reviews: ${reviewsNo}`;
+        document.getElementById(`listItem${i}`).appendChild(newListItem);
+
+        /* TODO: Comments number */
     }
 
     if(showNullNameWarning) {
