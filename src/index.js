@@ -59,6 +59,9 @@ const graphqlQuery = `
       pullRequests(first: 100) {
         nodes {
           title
+          author {
+            login
+          }
           assignees(first: 100) {
             nodes {
               login

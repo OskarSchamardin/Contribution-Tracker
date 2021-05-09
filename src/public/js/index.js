@@ -28,6 +28,8 @@ async function updateStatusesInfo() {
         let issuesNo = 0;           // Number of authored issues
         let commitsNo = 0;          // Number of all authored commits
         let mainCommitsNo = 0;      // Number of authored commits in 'main'
+        let pullsNo = 0;            // Number of authored pull requests
+        let pullsAssignedNo = 0;    // Number of pull requests assigned to user
         let scannedCommits = [];    // Helps with preventing duplicate data
 
         /* List item container */
@@ -88,7 +90,22 @@ async function updateStatusesInfo() {
         newListItem.innerText = `Authored commits: ${commitsNo} (main: ${mainCommitsNo})`;
         document.getElementById(`listItem${i}`).appendChild(newListItem);
 
-        /* TODO: PR number, Comments number, Code reviews number */
+        /* Pull requests number */
+        for(let i in data['pullRequests']['nodes']) {
+            const pullRequest = data['pullRequests']['nodes'][i];
+
+            if(pullRequest['author']['login'] === username) { pullsNo++; }      // Increment if user is PR author
+            if(pullRequest['assignees'] !== null) {
+                for(let j in pullRequest['assignees']['nodes']) {
+                    if (pullRequest['assignees']['nodes'][j]['login'] === username) { pullsAssignedNo++; } // Increment if PR is assigned to user
+                }
+            }
+        }
+        newListItem = document.createElement('p');
+        newListItem.innerText = `Authored pull requests: ${pullsNo} (assigned: ${pullsAssignedNo})`;
+        document.getElementById(`listItem${i}`).appendChild(newListItem);
+
+        /* TODO: Comments number, Code reviews number */
     }
 
     if(showNullNameWarning) {
