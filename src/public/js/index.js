@@ -151,6 +151,31 @@ async function updateStatusesInfo() {
         newListItem = document.createElement('p');
         newListItem.innerText = `Authored comments: ${commentsIssuesNo + commentsPullsNo} (in issues: ${commentsIssuesNo}) (in PRs: ${commentsPullsNo})`;
         document.getElementById(`listItem${i}`).appendChild(newListItem);
+
+        /* Effort-o-meter (give overall score) */
+        let overallEffort = issuesNo + commitsNo + pullsNo + reviewsNo + commentsPullsNo + commentsIssuesNo;
+        let effortMeterPreText = "Effort-o-meter:";
+        newListItem = document.createElement('p');
+        if(overallEffort < 1) {
+            newListItem.innerText = `${effortMeterPreText} No effort (${overallEffort})`;
+            newListItem.style.color = `#FF0000`;
+        } else if(overallEffort < 10) {
+            newListItem.innerText = `${effortMeterPreText} Little effort (${overallEffort})`;
+            newListItem.style.color = `#FF6600`;
+        } else if(overallEffort < 30) {
+            newListItem.innerText = `${effortMeterPreText} Some effort (${overallEffort})`;
+            newListItem.style.color = `#FFAA00`;
+        } else if(overallEffort < 50) {
+            newListItem.innerText = `${effortMeterPreText} Good effort (${overallEffort})`;
+            newListItem.style.color = `#AAFF00`;
+        } else if(overallEffort < 70) {
+            newListItem.innerText = `${effortMeterPreText} Great effort (${overallEffort})`;
+            newListItem.style.color = `#44FF00`;
+        } else if(overallEffort > 99) {
+            newListItem.innerText = `${effortMeterPreText} Outstanding effort (${overallEffort})`;
+            newListItem.style.color = `#00FF00`;
+        }
+        document.getElementById(`listItem${i}`).appendChild(newListItem);
     }
 
     if(showNullNameWarning) {
