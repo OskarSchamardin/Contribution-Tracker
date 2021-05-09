@@ -32,6 +32,8 @@ async function updateStatusesInfo() {
         let pullsNo = 0;            // Number of authored pull requests
         let pullsAssignedNo = 0;    // Number of pull requests assigned to user
         let reviewsNo = 0;          // Number of authored code reviews (comments in review threads in PR)
+        let commentsIssuesNo = 0;   // Number of authored code comments in issues
+        let commentsPullsNo = 0;    // Number of authored code comments in pull requests
         let scannedCommits = [];    // Helps with preventing duplicate data
 
         /* List item container */
@@ -121,7 +123,28 @@ async function updateStatusesInfo() {
         newListItem.innerText = `Authored code reviews: ${reviewsNo}`;
         document.getElementById(`listItem${i}`).appendChild(newListItem);
 
-        /* TODO: Comments number */
+        /* Comments in issues and PRs */
+        for(let i in data['pullRequests']['nodes']) {
+            const pullRequest = data['pullRequests']['nodes'][i];
+
+            if(pullRequest['comments'] !== null) {
+                for(let j in pullRequest['comments']['nodes']) {
+                    if(pullRequest['comments']['nodes'][j]['author']['login'] === username) { commentsPullsNo++; } // Increment if comment is from username
+                }
+            }
+        }
+        for(let i in data['issues']['nodes']) {
+            const issues = data['issues']['nodes'][i];
+
+            if(issues['comments'] !== null) {
+                for(let j in issues['comments']['nodes']) {
+                    if(issues['comments']['nodes'][j]['author']['login'] === username) { commentsIssuesNo++; } // Increment if comment is from username
+                }
+            }
+        }
+        newListItem = document.createElement('p');
+        newListItem.innerText = `Authored comments: ${commentsIssuesNo + commentsPullsNo} (in issues: ${commentsIssuesNo}) (in PRs: ${commentsPullsNo})`;
+        document.getElementById(`listItem${i}`).appendChild(newListItem);
     }
 
     if(showNullNameWarning) {
