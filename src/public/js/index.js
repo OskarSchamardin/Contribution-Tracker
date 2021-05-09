@@ -154,27 +154,20 @@ async function updateStatusesInfo() {
 
         /* Effort-o-meter (give overall score) */
         let overallEffort = issuesNo + commitsNo + pullsNo + reviewsNo + commentsPullsNo + commentsIssuesNo;
-        let effortMeterPreText = "Effort-o-meter:";
+        let effortPreText = "Effort-o-meter:";
+        let effortColor;
+        let effortText;
         newListItem = document.createElement('p');
-        if(overallEffort < 1) {
-            newListItem.innerText = `${effortMeterPreText} No effort (${overallEffort})`;
-            newListItem.style.color = `#FF0000`;
-        } else if(overallEffort < 10) {
-            newListItem.innerText = `${effortMeterPreText} Little effort (${overallEffort})`;
-            newListItem.style.color = `#FF6600`;
-        } else if(overallEffort < 30) {
-            newListItem.innerText = `${effortMeterPreText} Some effort (${overallEffort})`;
-            newListItem.style.color = `#FFAA00`;
-        } else if(overallEffort < 50) {
-            newListItem.innerText = `${effortMeterPreText} Good effort (${overallEffort})`;
-            newListItem.style.color = `#AAFF00`;
-        } else if(overallEffort < 70) {
-            newListItem.innerText = `${effortMeterPreText} Great effort (${overallEffort})`;
-            newListItem.style.color = `#44FF00`;
-        } else if(overallEffort > 99) {
-            newListItem.innerText = `${effortMeterPreText} Outstanding effort (${overallEffort})`;
-            newListItem.style.color = `#00FF00`;
-        }
+
+        if(overallEffort < 1)  { effortText = 'No effort';          effortColor = '#FF0000'; } else
+        if(overallEffort < 10) { effortText = 'Little effort';      effortColor = '#FF6600'; } else
+        if(overallEffort < 30) { effortText = 'Some effort';        effortColor = '#FFAA00'; } else
+        if(overallEffort < 50) { effortText = 'Good effort';        effortColor = '#AAFF00'; } else
+        if(overallEffort < 70) { effortText = 'Great effort';       effortColor = '#44FF00'; } else
+        if(overallEffort > 69) { effortText = 'Outstanding effort'; effortColor = '#00FF00'; }
+
+        newListItem.innerText = `${effortPreText} ${effortText} (${overallEffort})`;
+        newListItem.style.color = effortColor;
         document.getElementById(`listItem${i}`).appendChild(newListItem);
     }
 
