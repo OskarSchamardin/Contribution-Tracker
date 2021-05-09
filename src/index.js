@@ -30,10 +30,11 @@ const graphqlQuery = `
       refs(refPrefix: "refs/heads/", orderBy: {direction: DESC, field: TAG_COMMIT_DATE}, first: 100) {
         edges {
           node {
+            name
             ... on Ref {
               target {
                 ... on Commit {
-                  history(first: 2) {
+                  history(first: 100) {
                     edges {
                       node {
                         ... on Commit {
