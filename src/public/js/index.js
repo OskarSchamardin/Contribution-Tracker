@@ -27,6 +27,7 @@ async function updateStatusesInfo() {
         const username = `${data['collaborators']['nodes'][i]['login']}`;
         const avatarURL = `${data['collaborators']['nodes'][i]['avatarUrl']}`;
         let issuesNo = 0;           // Number of authored issues
+        let issuesAssignedNo = 0;   // Number of issues assigned to user
         let commitsNo = 0;          // Number of all authored commits
         let mainCommitsNo = 0;      // Number of authored commits in 'main'
         let pullsNo = 0;            // Number of authored pull requests
@@ -57,12 +58,17 @@ async function updateStatusesInfo() {
 
         /* Number of authored issues */
         for(let i in data['issues']['nodes']) {
-            if(data['issues']['nodes'][i]['author']['login'] === username) {
-                issuesNo++;
+            const issue = data['issues']['nodes'][i];
+
+            if(issue['author']['login'] === username) { issuesNo++; }       // Increment is user is issue author
+            if(issue['assignees'] !== null) {
+                for(let j in issue['assignees']['nodes']) {
+                    if (issue['assignees']['nodes'][j]['login'] === username) { issuesAssignedNo++; } // Increment if PR is assigned to user
+                }
             }
         }
         newListItem = document.createElement('p');
-        newListItem.innerText = `Authored issues: ${issuesNo}`;
+        newListItem.innerText = `Authored issues: ${issuesNo} (assigned: ${issuesAssignedNo})`;
         document.getElementById(`listItem${i}`).appendChild(newListItem);
 
         /* Number of authored commits */

@@ -18,7 +18,12 @@ const graphqlQuery = `
           author {
             login
           }
-          comments (first: 100) {
+          assignees(first: 100) {
+            nodes {
+              login
+            }
+          }
+          comments(first: 100) {
             nodes {
               author {
                 login
