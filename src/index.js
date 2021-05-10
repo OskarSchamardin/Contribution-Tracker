@@ -11,44 +11,47 @@ const port = process.env.PORT || 3000;  // Use port found in '.env' or default b
 const graphqlQuery = `
 {
   organization(login: "TPT-Loane") {
-    repository(name: "TPT-Loane") {
-      issues(first: 100) {
-        nodes {
-          number
-          author {
-            login
-          }
-          assignees(first: 100) {
-            nodes {
+    repositories(first: 5) {
+      nodes {
+        name
+        issues(first: 100) {
+          nodes {
+            number
+            author {
               login
             }
-          }
-          comments(first: 100) {
-            nodes {
-              author {
+            assignees(first: 100) {
+              nodes {
                 login
+              }
+            }
+            comments(first: 100) {
+              nodes {
+                author {
+                  login
+                }
               }
             }
           }
         }
-      }
-      refs(refPrefix: "refs/heads/", orderBy: {direction: DESC, field: TAG_COMMIT_DATE}, first: 100) {
-        edges {
-          node {
-            name
-            ... on Ref {
-              target {
-                ... on Commit {
-                  history(first: 100) {
-                    edges {
-                      node {
-                        ... on Commit {
-                          abbreviatedOid
-                          messageHeadline
-                          committedDate
-                          author {
-                            user {
-                              login
+        refs(refPrefix: "refs/heads/", orderBy: {direction: DESC, field: TAG_COMMIT_DATE}, first: 100) {
+          edges {
+            node {
+              name
+              ... on Ref {
+                target {
+                  ... on Commit {
+                    history(first: 100) {
+                      edges {
+                        node {
+                          ... on Commit {
+                            abbreviatedOid
+                            messageHeadline
+                            committedDate
+                            author {
+                              user {
+                                login
+                              }
                             }
                           }
                         }
@@ -60,38 +63,38 @@ const graphqlQuery = `
             }
           }
         }
-      }
-      pullRequests(first: 100) {
-        nodes {
-          title
-          author {
-            login
-          }
-          assignees(first: 100) {
-            nodes {
+        pullRequests(first: 100) {
+          nodes {
+            title
+            author {
               login
             }
-          }
-          comments(first: 100) {
-            nodes {
-              author {
+            assignees(first: 100) {
+              nodes {
                 login
               }
             }
-          }
-          reviews(first: 100) {
-            nodes {
-              author {
-                login
+            comments(first: 100) {
+              nodes {
+                author {
+                  login
+                }
+              }
+            }
+            reviews(first: 100) {
+              nodes {
+                author {
+                  login
+                }
               }
             }
           }
         }
-      }
-      collaborators(first: 100) {
-        nodes {
-          avatarUrl
-          login
+        collaborators(first: 100) {
+          nodes {
+            avatarUrl
+            login
+          }
         }
       }
     }
