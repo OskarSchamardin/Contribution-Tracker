@@ -12,6 +12,7 @@ module.exports = {
             name
             issues(first: 100) {
               nodes {
+                updatedAt
                 number
                 author {
                   login
@@ -23,6 +24,7 @@ module.exports = {
                 }
                 comments(first: 100) {
                   nodes {
+                    updatedAt
                     author {
                       login
                     }
@@ -74,8 +76,7 @@ module.exports = {
           }
         }
       }
-    }
-    `,
+    }`,
 
     /* GraphQL query to get pull requests from github */
     queryPullRequests: `
@@ -86,6 +87,7 @@ module.exports = {
             name
             pullRequests(first: 100) {
               nodes {
+                updatedAt
                 title
                 author {
                   login
@@ -97,6 +99,7 @@ module.exports = {
                 }
                 comments(first: 100) {
                   nodes {
+                    updatedAt
                     author {
                       login
                     }
@@ -104,6 +107,7 @@ module.exports = {
                 }
                 reviews(first: 100) {
                   nodes {
+                    updatedAt
                     author {
                       login
                     }

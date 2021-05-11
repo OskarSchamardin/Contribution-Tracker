@@ -17,3 +17,6 @@ html {
     display: none;
     color: #FFBB00;
 }
+#fieldThresholdInfo {
+    display: inline;
+}

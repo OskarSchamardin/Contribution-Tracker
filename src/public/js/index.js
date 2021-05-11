@@ -8,7 +8,7 @@ async function getDataFromAPI(queryType) {
     return data;
 }
 
-async function updateStatusesInfo() {
+async function updateStatusesInfo(thresholdInDays = 7) {
     /* Gets new data from github API and displays it */
 
     /* Parallel async calls and await all: https://stackoverflow.com/a/35612484 */
@@ -62,6 +62,8 @@ async function updateStatusesInfo() {
             for(let i in issues[repoIncrement]['issues']['nodes']) {
                 const issue = issues[repoIncrement]['issues']['nodes'][i];
 
+                if(!isRelevantTime(issue['updatedAt'], thresholdInDays)) { continue; }  // Skip if older than threshold
+
                 if(issue['author']['login'] === username) { issuesNo++; }       // Increment is user is issue author
                 if(issue['assignees'] !== null) {
                     for(let j in issue['assignees']['nodes']) {
@@ -83,6 +85,8 @@ async function updateStatusesInfo() {
 
                     if(nullNames.includes(commitSHA)) { continue; }                                     // Skip commits with no registered author
                     if(scannedCommits.includes(commitSHA) && branch['name'] !== 'main') { continue; }   // Skip scanned commits if not on 'main' branch
+                    if(!isRelevantTime(commit[j]['node']['committedDate'], thresholdInDays)) { continue; } // Skip if older than threshold
+
 
                     if(commit[j]['node']['author']['user'] === null) {
                         showNullNameWarning = true;
@@ -104,6 +108,8 @@ async function updateStatusesInfo() {
             for(let i in pulls[repoIncrement]['pullRequests']['nodes']) {
                 const pullRequest = pulls[repoIncrement]['pullRequests']['nodes'][i];
 
+                if(!isRelevantTime(pullRequest['updatedAt'], thresholdInDays)) { continue; } // Skip if older than threshold
+
                 if(pullRequest['author']['login'] === username) { pullsNo++; }      // Increment if user is PR author
                 if(pullRequest['assignees'] !== null) {
                     for(let j in pullRequest['assignees']['nodes']) {
@@ -122,6 +128,8 @@ async function updateStatusesInfo() {
                     let reviewedPull = false;
 
                     for(let j in pullRequest['reviews']['nodes']) {
+                        if(!isRelevantTime(pullRequest['updatedAt'], thresholdInDays)) { continue; } // Skip if older than threshold
+
                         if(pullRequest['reviews']['nodes'][j]['author']['login'] === username) {
                             reviewsNo++;            // Increment if review is from username
                             reviewedPull = true;    // Mark user with participation
@@ -138,6 +146,8 @@ async function updateStatusesInfo() {
             for(let i in pulls[repoIncrement]['pullRequests']['nodes']) {
                 const pullRequest = pulls[repoIncrement]['pullRequests']['nodes'][i];
 
+                if(!isRelevantTime(pullRequest['updatedAt'], thresholdInDays)) { continue; } // Skip if older than threshold
+
                 if(pullRequest['comments'] !== null) {
                     for(let j in pullRequest['comments']['nodes']) {
                         if(pullRequest['comments']['nodes'][j]['author']['login'] === username) { commentsPullsNo++; } // Increment if comment is from username
@@ -146,6 +156,8 @@ async function updateStatusesInfo() {
             }
             for(let i in issues[repoIncrement]['issues']['nodes']) {
                 const issue = issues[repoIncrement]['issues']['nodes'][i];
+
+                if(!isRelevantTime(issue['updatedAt'], thresholdInDays)) { continue; } // Skip if older than threshold
 
                 if(issue['comments'] !== null) {
                     for(let j in issue['comments']['nodes']) {
@@ -240,4 +252,20 @@ async function updateStatusesInfo() {
         /* Show visual warning if some commits have 'null' as the authoring user */
         document.getElementById('nullNameWarning').style.display = 'block';
     }
+}
+
+function isRelevantTime(time, threshold) {
+    /* Checks if date is within the threshold of being relevant.
+     * This function checks for example if a date is more than 7 days
+     * old, if it is, then it will return true, otherwise will return
+     * false.
+     */
+
+    const now = new Date().getTime();           // Current time
+    const then = new Date(time).getTime();      // Time to test
+    threshold= threshold* 24 * 60 * 60 * 1000;  // Days = days * hours * minutes * seconds * milliseconds
+
+    if((now - then) < threshold) { return true; }     // Return true if time difference is within the threshold
+
+    return false;   // Return false, because the above 'if' statement failed
 }
