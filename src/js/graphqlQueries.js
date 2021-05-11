@@ -7,7 +7,7 @@ module.exports = {
     queryIssues: `
     {
       organization(login: "TPT-Loane") {
-        repositories(first: 5) {
+        repositories(first: 15) {
           nodes {
             name
             issues(first: 100) {
@@ -39,7 +39,7 @@ module.exports = {
     queryCommits: `
     {
       organization(login: "TPT-Loane") {
-        repositories(first: 5) {
+        repositories(first: 15) {
           nodes {
             name
             refs(refPrefix: "refs/heads/", orderBy: {direction: DESC, field: TAG_COMMIT_DATE}, first: 100) {
@@ -81,7 +81,7 @@ module.exports = {
     queryPullRequests: `
     {
       organization(login: "TPT-Loane") {
-        repositories(first: 5) {
+        repositories(first: 15) {
           nodes {
             name
             pullRequests(first: 100) {
@@ -120,7 +120,7 @@ module.exports = {
     queryContributors: `
     {
       organization(login: "TPT-Loane") {
-        repositories(first: 5) {
+        repositories(first: 15) {
           nodes {
             name
             collaborators(first: 100) {
