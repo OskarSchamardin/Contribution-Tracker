@@ -251,6 +251,8 @@ async function updateStatusesInfo(thresholdInDays = 7) {
     if(showNullNameWarning) {
         /* Show visual warning if some commits have 'null' as the authoring user */
         document.getElementById('nullNameWarning').style.display = 'block';
+    } else {
+        document.getElementById('nullNameWarning').style.display = 'none';
     }
 }
 
