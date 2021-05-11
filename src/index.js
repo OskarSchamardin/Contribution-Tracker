@@ -6,105 +6,35 @@ require('dotenv').config();             // Use 'process.env.ENV_VARIABLE' to use
 const app = express();
 
 const port = process.env.PORT || 3000;  // Use port found in '.env' or default back to port '3000'
-
-/* GraphQL query that gets sent to github API */
-const graphqlQuery = `
-{
-  organization(login: "TPT-Loane") {
-    repositories(first: 5) {
-      nodes {
-        name
-        issues(first: 100) {
-          nodes {
-            number
-            author {
-              login
-            }
-            assignees(first: 100) {
-              nodes {
-                login
-              }
-            }
-            comments(first: 100) {
-              nodes {
-                author {
-                  login
-                }
-              }
-            }
-          }
-        }
-        refs(refPrefix: "refs/heads/", orderBy: {direction: DESC, field: TAG_COMMIT_DATE}, first: 100) {
-          edges {
-            node {
-              name
-              ... on Ref {
-                target {
-                  ... on Commit {
-                    history(first: 100) {
-                      edges {
-                        node {
-                          ... on Commit {
-                            abbreviatedOid
-                            messageHeadline
-                            committedDate
-                            author {
-                              user {
-                                login
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        pullRequests(first: 100) {
-          nodes {
-            title
-            author {
-              login
-            }
-            assignees(first: 100) {
-              nodes {
-                login
-              }
-            }
-            comments(first: 100) {
-              nodes {
-                author {
-                  login
-                }
-              }
-            }
-            reviews(first: 100) {
-              nodes {
-                author {
-                  login
-                }
-              }
-            }
-          }
-        }
-        collaborators(first: 100) {
-          nodes {
-            avatarUrl
-            login
-          }
-        }
-      }
-    }
-  }
-}`;
+const queries = require('./js/graphqlQueries.js');
 
 /* Serve static pages from the 'public' directory */
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get("/data", (req, res) => {
+app.get("/api", (req, res) => {
+  /* Query to send to github */
+  let graphqlQuery = false;
+
+  switch (req.query.queryType) {
+    case 'issues':
+      graphqlQuery = queries.queryIssues;
+      break;
+    case 'commits':
+      graphqlQuery = queries.queryCommits;
+      break;
+    case 'pulls':
+      graphqlQuery = queries.queryPullRequests;
+      break;
+    case 'collaborators':
+      graphqlQuery = queries.queryContributors;
+      break;
+    default:
+      graphqlQuery = false;
+      break;
+  }
+
+  if(!graphqlQuery) { res.status(400).send('Bad request.'); return; }
+
   /* Get data from github and return JSON */
   fetch("https://api.github.com/graphql", {
     method: "POST",
@@ -120,6 +50,7 @@ app.get("/data", (req, res) => {
       return result.json();
     })
     .then(data => {
+      res.status(200);
       res.json(data);
     });
 });

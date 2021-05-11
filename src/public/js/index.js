@@ -1,17 +1,30 @@
 updateStatusesInfo(); // Display info on page load
 
-async function getUpdatedStatuses() {
-    /* GETs '/data' to trigger the back end to get info from github API */
+async function getDataFromAPI(queryType) {
+    /* GETs '/api' to trigger the back end to get info from github API */
 
-    let data = await fetch('/data');
+    let data = await fetch(`/api?queryType=${queryType}`);
     data = await data.json();           // Convert data to json to avoid getting 'readable stream' object
     return data;
 }
 
 async function updateStatusesInfo() {
     /* Gets new data from github API and displays it */
-    let data = await getUpdatedStatuses();
-    data = await data['data']['organization']['repositories']['nodes'];
+
+    /* Parallel async calls and await all: https://stackoverflow.com/a/35612484 */
+    let [issues, commits, pulls, collaborators] = await Promise.all([
+        getDataFromAPI('issues'),
+        getDataFromAPI('commits'),
+        getDataFromAPI('pulls'),
+        getDataFromAPI('collaborators')
+    ]);
+
+    issues = issues['data']['organization']['repositories']['nodes'];
+    commits = commits['data']['organization']['repositories']['nodes'];
+    pulls = pulls['data']['organization']['repositories']['nodes'];
+    collaborators = collaborators['data']['organization']['repositories']['nodes'];
+
+    let repos = issues;
 
     const list= document.getElementById('list');
     let nullNames = [];                 // Commits with no registered user as author
@@ -22,13 +35,11 @@ async function updateStatusesInfo() {
     while(list.firstChild) { list.removeChild(list.lastChild) }
 
     /* Iterate through every repo in organization */
-    for(let repoCount in data) {
-        const repo = data[repoCount];
-
+    for(let repoIncrement in repos) {
         /* Filter and display data for each collaborator */
-        for(let i in repo['collaborators']['nodes']) {
-            const username = `${repo['collaborators']['nodes'][i]['login']}`;
-            const avatarURL = `${repo['collaborators']['nodes'][i]['avatarUrl']}`;
+        for(let i in collaborators[repoIncrement]['collaborators']['nodes']) {
+            const username = `${collaborators[repoIncrement]['collaborators']['nodes'][i]['login']}`;
+            const avatarURL = `${collaborators[repoIncrement]['collaborators']['nodes'][i]['avatarUrl']}`;
             let issuesNo = 0;           // Number of authored issues
             let issuesAssignedNo = 0;   // Number of issues assigned to user
             let commitsNo = 0;          // Number of all authored commits
@@ -47,8 +58,8 @@ async function updateStatusesInfo() {
             listData['avatarURL'] = avatarURL;
 
             /* Number of authored issues */
-            for(let i in repo['issues']['nodes']) {
-                const issue = repo['issues']['nodes'][i];
+            for(let i in issues[repoIncrement]['issues']['nodes']) {
+                const issue = issues[repoIncrement]['issues']['nodes'][i];
 
                 if(issue['author']['login'] === username) { issuesNo++; }       // Increment is user is issue author
                 if(issue['assignees'] !== null) {
@@ -61,8 +72,8 @@ async function updateStatusesInfo() {
             listData['issuesAssignedNo'] = (listData['issuesAssignedNo'] || 0) + issuesAssignedNo;
 
             /* Number of authored commits */
-            for(let i in repo['refs']['edges']) {
-                const branch = repo['refs']['edges'][i]['node'];
+            for(let i in commits[repoIncrement]['refs']['edges']) {
+                const branch = commits[repoIncrement]['refs']['edges'][i]['node'];
                 const commit = branch['target']['history']['edges'];
 
                 /* Loop commits in branch history */
@@ -89,8 +100,8 @@ async function updateStatusesInfo() {
             listData['mainCommitsNo'] = (listData['mainCommitsNo'] || 0) + mainCommitsNo;
 
             /* Pull requests number */
-            for(let i in repo['pullRequests']['nodes']) {
-                const pullRequest = repo['pullRequests']['nodes'][i];
+            for(let i in pulls[repoIncrement]['pullRequests']['nodes']) {
+                const pullRequest = pulls[repoIncrement]['pullRequests']['nodes'][i];
 
                 if(pullRequest['author']['login'] === username) { pullsNo++; }      // Increment if user is PR author
                 if(pullRequest['assignees'] !== null) {
@@ -103,8 +114,8 @@ async function updateStatusesInfo() {
             listData['pullsAssignedNo'] = (listData['pullsAssignedNo'] || 0) + pullsAssignedNo;
 
             /* Code reviews number */
-            for(let i in repo['pullRequests']['nodes']) {
-                const pullRequest = repo['pullRequests']['nodes'][i];
+            for(let i in pulls[repoIncrement]['pullRequests']['nodes']) {
+                const pullRequest = pulls[repoIncrement]['pullRequests']['nodes'][i];
 
                 if(pullRequest['reviews'] !== null) {
                     for(let j in pullRequest['reviews']['nodes']) {
@@ -115,8 +126,8 @@ async function updateStatusesInfo() {
             listData['reviewsNo'] = (listData['reviewsNo'] || 0) + reviewsNo;
 
             /* Comments in issues and PRs */
-            for(let i in repo['pullRequests']['nodes']) {
-                const pullRequest = repo['pullRequests']['nodes'][i];
+            for(let i in pulls[repoIncrement]['pullRequests']['nodes']) {
+                const pullRequest = pulls[repoIncrement]['pullRequests']['nodes'][i];
 
                 if(pullRequest['comments'] !== null) {
                     for(let j in pullRequest['comments']['nodes']) {
@@ -124,12 +135,12 @@ async function updateStatusesInfo() {
                     }
                 }
             }
-            for(let i in repo['issues']['nodes']) {
-                const issues = repo['issues']['nodes'][i];
+            for(let i in issues[repoIncrement]['issues']['nodes']) {
+                const issue = issues[repoIncrement]['issues']['nodes'][i];
 
-                if(issues['comments'] !== null) {
-                    for(let j in issues['comments']['nodes']) {
-                        if(issues['comments']['nodes'][j]['author']['login'] === username) { commentsIssuesNo++; } // Increment if comment is from username
+                if(issue['comments'] !== null) {
+                    for(let j in issue['comments']['nodes']) {
+                        if(issue['comments']['nodes'][j]['author']['login'] === username) { commentsIssuesNo++; } // Increment if comment is from username
                     }
                 }
             }
