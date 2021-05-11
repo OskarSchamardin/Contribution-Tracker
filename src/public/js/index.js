@@ -40,16 +40,17 @@ async function updateStatusesInfo() {
         for(let i in collaborators[repoIncrement]['collaborators']['nodes']) {
             const username = `${collaborators[repoIncrement]['collaborators']['nodes'][i]['login']}`;
             const avatarURL = `${collaborators[repoIncrement]['collaborators']['nodes'][i]['avatarUrl']}`;
-            let issuesNo = 0;           // Number of authored issues
-            let issuesAssignedNo = 0;   // Number of issues assigned to user
-            let commitsNo = 0;          // Number of all authored commits
-            let mainCommitsNo = 0;      // Number of authored commits in 'main'
-            let pullsNo = 0;            // Number of authored pull requests
-            let pullsAssignedNo = 0;    // Number of pull requests assigned to user
-            let reviewsNo = 0;          // Number of authored code reviews (comments in review threads in PR)
-            let commentsIssuesNo = 0;   // Number of authored code comments in issues
-            let commentsPullsNo = 0;    // Number of authored code comments in pull requests
-            let scannedCommits = [];    // Helps with preventing duplicate data
+            let issuesNo = 0;               // Number of authored issues
+            let issuesAssignedNo = 0;       // Number of issues assigned to user
+            let commitsNo = 0;              // Number of all authored commits
+            let mainCommitsNo = 0;          // Number of authored commits in 'main'
+            let pullsNo = 0;                // Number of authored pull requests
+            let pullsAssignedNo = 0;        // Number of pull requests assigned to user
+            let reviewsNo = 0;              // Number of authored code reviews (comments in review threads in PR)
+            let reviewParticipationsNo = 0; // Number of authored code reviews (comments in review threads in PR)
+            let commentsIssuesNo = 0;       // Number of authored code comments in issues
+            let commentsPullsNo = 0;        // Number of authored code comments in pull requests
+            let scannedCommits = [];        // Helps with preventing duplicate data
 
             /* Add user to list creation list if not in it */
             if(listItemsData.findIndex(el => el.username === username) === -1) { listItemsData[i] = { 'username': username }; }
@@ -118,12 +119,20 @@ async function updateStatusesInfo() {
                 const pullRequest = pulls[repoIncrement]['pullRequests']['nodes'][i];
 
                 if(pullRequest['reviews'] !== null) {
+                    let reviewedPull = false;
+
                     for(let j in pullRequest['reviews']['nodes']) {
-                        if(pullRequest['reviews']['nodes'][j]['author']['login'] === username) { reviewsNo++; } // Increment if review is from username
+                        if(pullRequest['reviews']['nodes'][j]['author']['login'] === username) {
+                            reviewsNo++;            // Increment if review is from username
+                            reviewedPull = true;    // Mark user with participation
+                        }
                     }
+
+                    if(reviewedPull) { reviewParticipationsNo++; }   // Increment review participation
                 }
             }
             listData['reviewsNo'] = (listData['reviewsNo'] || 0) + reviewsNo;
+            listData['reviewParticipationsNo'] = (listData['reviewParticipationsNo'] || 0) + reviewParticipationsNo;
 
             /* Comments in issues and PRs */
             for(let i in pulls[repoIncrement]['pullRequests']['nodes']) {
@@ -152,7 +161,7 @@ async function updateStatusesInfo() {
                 listData['issuesNo'] +
                 listData['commitsNo'] +
                 listData['pullsNo'] +
-                listData['reviewsNo'] +
+                listData['reviewParticipationsNo'] +
                 listData['commentsPullsNo'] +
                 listData['commentsIssuesNo'];
 
@@ -212,7 +221,7 @@ async function updateStatusesInfo() {
 
         /* Code reviews */
         newListItem = document.createElement('p');
-        newListItem.innerText = `Authored code reviews: ${listData['reviewsNo']}`;
+        newListItem.innerText = `Authored code reviews: ${listData['reviewParticipationsNo']} (review comments: ${listData['reviewsNo']})`;
         document.getElementById(`listItem${i}`).appendChild(newListItem);
 
         /* Comments in issues and PRs */

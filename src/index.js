@@ -5,8 +5,8 @@ require('dotenv').config();             // Use 'process.env.ENV_VARIABLE' to use
 
 const app = express();
 
-const port = process.env.PORT || 3000;  // Use port found in '.env' or default back to port '3000'
-const queries = require('./js/graphqlQueries.js');
+const port = process.env.PORT || 3000;              // Use port found in '.env' or default back to port '3000'
+const queries = require('./js/graphqlQueries.js');  // import queries stored in './js/graphqlQueries.js'
 
 /* Serve static pages from the 'public' directory */
 app.use(express.static(path.join(__dirname, 'public')));
