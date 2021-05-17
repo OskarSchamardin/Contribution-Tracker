@@ -1,0 +1,11 @@
+version: '3.9'
+services:
+  be:
+    # back end server
+    build:
+      context: ./
+      dockerfile: docker/be.dockerfile
+    ports:
+      - 3002:3000
+    volumes:
+      - ./:/app
