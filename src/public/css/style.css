@@ -20,3 +20,6 @@ html {
 #fieldThresholdInfo {
     display: inline;
 }
+#githubAuthLink {
+    display: block;
+}

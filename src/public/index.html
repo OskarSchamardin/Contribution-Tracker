@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="css/style.css"/>
     <body>
         <h1>Contribution tracker</h1>
+        <a id="githubAuthLink" href="/githubOAuth">Authenticate with github</a>
         <p id="fieldThresholdInfo">Show data newer than N days:</p>
         <input id="fieldThreshold" class="numberField" type="number" value="7"/>
         <button id="btnGetAPI" class="button" onclick="updateStatusesInfo(Number(document.getElementById('fieldThreshold').value))">Update list</button>
