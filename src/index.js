@@ -27,7 +27,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get("/githubOAuth", (req, res) => {
     res.writeHead(303, {
         Location: githubOAuth.getAuthorizeUrl({
-            scope: "repo"
+            /* Scopes docs: https://docs.github.com/en/github-ae@latest/developers/apps/building-oauth-apps/scopes-for-oauth-apps */
+            scope: "public_repo"   // Scope should be readonly, however github has no readonly access to repos scope
         })
     });
     res.end();
@@ -43,7 +44,7 @@ app.get("/githubOAuthResponse", (req, res) => {
         /* Send a cookie to the user */
         /* Docs: http://expressjs.com/en/api.html#res.cookie */
         res.cookie('githubOAuthSecretToken', access_token, {
-            expires: new Date(Date.now() + (24 * 60 * 60 * 1000)),
+            expires: new Date(Date.now() + (24 * 60 * 60 * 1000)),  // 24 hours = 60 min * 60 sec * 1000 ms
             httpOnly: true,
             secure: true,
         });
