@@ -1,14 +1,15 @@
-const express = require("express");     // Serve the page at a 'localhost' near you.
-const fetch = require("node-fetch");    // Make GraphQL queries and such.
-const oauth = require("oauth").OAuth2;  // OAuth helper
-const path = require("path");           // Use files in directory.
-require('dotenv').config();             // Use 'process.env.ENV_VARIABLE' to use '.env' file vars.
+const express = require('express');             // Serve the page at a 'localhost' near you.
+const fetch = require('node-fetch');            // Make GraphQL queries and such.
+const oauth = require('oauth').OAuth2;          // OAuth helper
+const path = require('path');                   // Use files in directory.
+require('dotenv').config();                     // Use 'process.env.ENV_VARIABLE' to use '.env' file vars.
+const cookieParser = require('cookie-parser');  // Parse cookies
 
 const app = express();
+app.use(cookieParser());
 
 const port = process.env.PORT || 3002;                          // Use port found in '.env' or default back to port '3002'
 const queries = require('./js/graphqlQueries.js');              // import queries stored in './js/graphqlQueries.js'
-let githubOAuthAppSecretToken = null;
 
 /* OAuth params for github API */
 const githubOAuth = new oauth(process.env.GITHUB_CLIENT_ID,
@@ -26,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get("/githubOAuth", (req, res) => {
     res.writeHead(303, {
         Location: githubOAuth.getAuthorizeUrl({
-            scope: "user,repo,gist"
+            scope: "repo"
         })
     });
     res.end();
@@ -38,15 +39,30 @@ app.get("/githubOAuthResponse", (req, res) => {
 
     githubOAuth.getOAuthAccessToken(code, {}, (err, access_token, refresh_token) => {
         if(err) { console.log(err); }
-        githubOAuthAppSecretToken = access_token;
+
+        /* Send a cookie to the user */
+        /* Docs: http://expressjs.com/en/api.html#res.cookie */
+        res.cookie('githubOAuthSecretToken', access_token, {
+            expires: new Date(Date.now() + (24 * 60 * 60 * 1000)),
+            httpOnly: true,
+            secure: true,
+        });
+        res.redirect('/');
     });
-    res.redirect('/');
 });
 
 app.get("/api", (req, res) => {
     /* Query to send to github */
     let graphqlQuery = false;
+    const githubOAuthSecretToken = req.cookies.githubOAuthSecretToken;
 
+    /* Check if secret github token is sent as a cookie */
+    if(githubOAuthSecretToken === undefined) {
+        res.status(401).send('Authorization required, please authorize with github first.');
+        return;
+    }
+
+    /* Determine what resource is requested */
     switch (req.query.queryType) {
         case 'issues':
             graphqlQuery = queries.queryIssues;
@@ -66,17 +82,13 @@ app.get("/api", (req, res) => {
     }
 
     if(!graphqlQuery) { res.status(400).send('Bad request.'); return; }
-    if(githubOAuthAppSecretToken === null) {
-        res.status(401).send('Authorization required, please authorize with github first.');
-        return;
-    }
 
     /* Get data from github and return JSON */
     fetch("https://api.github.com/graphql", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${githubOAuthAppSecretToken}`
+            "Authorization": `Bearer ${githubOAuthSecretToken}`
         },
         body: JSON.stringify({
             query: graphqlQuery
