@@ -40,6 +40,7 @@ async function updateStatusesInfo(thresholdInDays = 7) {
         for(let i in collaborators[repoIncrement]['collaborators']['nodes']) {
             const username = `${collaborators[repoIncrement]['collaborators']['nodes'][i]['login']}`;
             const avatarURL = `${collaborators[repoIncrement]['collaborators']['nodes'][i]['avatarUrl']}`;
+            const name = `${collaborators[repoIncrement]['collaborators']['nodes'][i]['name']}`;
             let issuesNo = 0;               // Number of authored issues
             let issuesAssignedNo = 0;       // Number of issues assigned to user
             let commitsNo = 0;              // Number of all authored commits
@@ -57,6 +58,7 @@ async function updateStatusesInfo(thresholdInDays = 7) {
             let listData = listItemsData[listItemsData.findIndex(el => el.username === username)]; // Stats for current user
 
             listData['avatarURL'] = avatarURL;
+            listData['name'] = name;
 
             /* Number of authored issues */
             for(let i in issues[repoIncrement]['issues']['nodes']) {
@@ -210,10 +212,10 @@ async function updateStatusesInfo(thresholdInDays = 7) {
         newListItem.style.width = '64px';
         document.getElementById(`listItem${i}`).appendChild(newListItem);
 
-        /* Login name */
+        /* Login and name */
         newListItem = document.createElement('a');
         newListItem.href= `https://github.com/${listData['username']}`;
-        newListItem.innerText = listData['username'];
+        newListItem.innerText = `${listData['username']} ${listData['name'] !== "null" ? '(' + listData['name'] + ')' : ""}`;
         document.getElementById(`listItem${i}`).appendChild(newListItem);
 
         /* Authored issues */

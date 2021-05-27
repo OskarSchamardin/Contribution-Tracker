@@ -131,6 +131,7 @@ module.exports = {
               nodes {
                 avatarUrl
                 login
+                name
               }
             }
           }
