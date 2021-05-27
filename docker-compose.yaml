@@ -6,6 +6,7 @@ services:
       context: ./
       dockerfile: docker/be.dockerfile
     ports:
-      - 3002:3002
+      - 80:3002
+      - 443:3002
     volumes:
       - ./:/app
